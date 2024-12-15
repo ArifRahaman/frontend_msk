@@ -88,7 +88,7 @@ const App = () => {
         />
       </div>
 
-      <div className="brush-size-slider flex items-center gap-4 mb-4">
+      <div className="brush-size-slider flex items-center gap-7 mb-4">
         <label
           htmlFor="brush-size"
           className="text-lg font-medium text-gray-700"
