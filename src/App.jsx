@@ -30,7 +30,7 @@ const App = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_DOMAIN}/upload`,
+        `https://backend-msk.onrender.com/upload`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
