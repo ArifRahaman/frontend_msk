@@ -1,55 +1,53 @@
-
 import React, { useState } from "react";
 import CanvasArea from "./components/CanvasArea";
 import ImageDisplay from "./components/ImageDisplay";
 import axios from "axios";
 import "./App.css";
 
+const DEFAULT_BRUSH_SIZE = 5;
+const MIN_BRUSH_SIZE = 1;
+const MAX_BRUSH_SIZE = 20;
+const UPLOAD_URL = "https://backend-msk.onrender.com/upload";
+
 const App = () => {
   const [image, setImage] = useState(null);
   const [maskImage, setMaskImage] = useState(null);
   const [uploadedData, setUploadedData] = useState(null);
-  const [brushSize, setBrushSize] = useState(5); // Default brush size
-  const [loading, setLoading] = useState(false); // Loading state
+  const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
+  const [loading, setLoading] = useState(false);
 
-  // Handle image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       const reader = new FileReader();
       reader.onload = () => setImage(reader.result);
+      reader.onerror = () => console.error("Error reading file");
       reader.readAsDataURL(file);
     }
   };
 
-  // Handle mask export and send data to backend
   const handleMaskExport = async (maskDataUrl) => {
     setMaskImage(maskDataUrl);
 
     const formData = new FormData();
-    formData.append("original", dataURLtoBlob(image));
-    formData.append("mask", dataURLtoBlob(maskDataUrl));
+    formData.append("original", convertDataURLToBlob(image));
+    formData.append("mask", convertDataURLToBlob(maskDataUrl));
 
-    setLoading(true); // Start spinner
+    setLoading(true);
     try {
-      const response = await axios.post(
-        "https://backend-msk.onrender.com/upload",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const response = await axios.post(UPLOAD_URL, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setUploadedData(response.data.data);
       localStorage.setItem("url", response.data.data.maskImageUrl);
     } catch (error) {
       console.error("Error uploading images:", error);
     } finally {
-      setLoading(false); // Stop spinner
+      setLoading(false);
     }
   };
 
-  // Convert Data URL to Blob
-  const dataURLtoBlob = (dataURL) => {
+  const convertDataURLToBlob = (dataURL) => {
     const byteString = atob(dataURL.split(",")[1]);
     const mimeString = dataURL.split(",")[0].split(":")[1].split(";")[0];
     const ab = new ArrayBuffer(byteString.length);
@@ -66,7 +64,6 @@ const App = () => {
         🎨 Image Mask Drawing Tool
       </h1>
 
-      {/* Image Upload Section */}
       <div className="upload-section mb-6 flex flex-col items-center">
         <label
           htmlFor="file-upload"
@@ -103,21 +100,20 @@ const App = () => {
         <input
           id="brush-size"
           type="range"
-          min="1"
-          max="20"
+          min={MIN_BRUSH_SIZE}
+          max={MAX_BRUSH_SIZE}
           value={brushSize}
           onChange={(e) => setBrushSize(Number(e.target.value))}
           className="slider w-40 accent-blue-600"
           style={{
             background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${
-              (brushSize / 20) * 100
-            }%, #e5e7eb ${(brushSize / 20) * 100}%, #e5e7eb 100%)`,
+              (brushSize / MAX_BRUSH_SIZE) * 100
+            }%, #e5e7eb ${(brushSize / MAX_BRUSH_SIZE) * 100}%, #e5e7eb 100%)`,
           }}
         />
         <span className="text-lg font-bold text-blue-800">{brushSize}px</span>
       </div>
 
-      {/* Canvas Area for Drawing */}
       {image && (
         <div className="w-full flex justify-center mb-6">
           <CanvasArea
@@ -128,7 +124,6 @@ const App = () => {
         </div>
       )}
 
-      {/* Loading Spinner */}
       {loading && (
         <div className="loading-spinner flex flex-col items-center mt-6">
           <div className="spinner-border animate-spin inline-block w-10 h-10 border-4 rounded-full border-blue-500 border-t-transparent"></div>
@@ -138,7 +133,6 @@ const App = () => {
         </div>
       )}
 
-      {/* Display the uploaded and processed images */}
       {uploadedData && (
         <div className="image-display flex flex-col items-center mt-6">
           <ImageDisplay
@@ -152,4 +146,3 @@ const App = () => {
 };
 
 export default App;
-
