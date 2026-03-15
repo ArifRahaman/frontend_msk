@@ -1,17 +1,26 @@
 import React, { useRef } from "react";
 import CanvasDraw from "react-canvas-draw";
 
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 800;
+const CONTAINER_WIDTH = 800;
+const CONTAINER_HEIGHT = 870;
+const TRANSITION_DURATION = "0.3s";
+const TRANSITION_TIMING_FUNCTION = "ease-in-out";
+const WHITE_BRUSH_COLOR = "rgba(255, 255, 255, 1)";
+const LAZY_RADIUS = 2;
+
 const CanvasArea = ({ image, onExportMask, zoomLevel, brushSize }) => {
   const canvasRef = useRef(null);
 
-  const handleExport = () => {
+  const exportMask = () => {
     if (canvasRef.current) {
       const maskDataUrl = canvasRef.current.getDataURL();
       onExportMask(maskDataUrl);
     }
   };
 
-  const handleClear = () => {
+  const clearCanvas = () => {
     if (canvasRef.current) {
       canvasRef.current.clear();
     }
@@ -19,32 +28,32 @@ const CanvasArea = ({ image, onExportMask, zoomLevel, brushSize }) => {
 
   return (
     <div
-      className="relative w-[800px] h-[870px] border border-gray-300"
+      className={`relative w-[${CONTAINER_WIDTH}px] h-[${CONTAINER_HEIGHT}px] border border-gray-300`}
       style={{
         transform: `scale(${zoomLevel})`,
         transformOrigin: "top left",
-        transition: "transform 0.3s ease-in-out",
+        transition: `transform ${TRANSITION_DURATION} ${TRANSITION_TIMING_FUNCTION}`,
       }}
     >
       <CanvasDraw
         ref={canvasRef}
-        canvasWidth={800}
-        canvasHeight={800}
+        canvasWidth={CANVAS_WIDTH}
+        canvasHeight={CANVAS_HEIGHT}
         imgSrc={image}
-        brushColor="rgba(255, 255, 255, 1)" // White brush color
-        lazyRadius={2}
-        brushRadius={brushSize} // Use brushSize prop
+        brushColor={WHITE_BRUSH_COLOR}
+        lazyRadius={LAZY_RADIUS}
+        brushRadius={brushSize}
       />
 
       <div className="flex justify-between mt-4">
         <button
-          onClick={handleExport}
+          onClick={exportMask}
           className="bg-green-500 text-white rounded-md px-4 py-2 transition-transform hover:scale-105"
         >
           Export Mask
         </button>
         <button
-          onClick={handleClear}
+          onClick={clearCanvas}
           className="bg-red-500 text-white rounded-md px-4 py-2 transition-transform hover:scale-105"
         >
           Clear Drawing
@@ -53,6 +62,5 @@ const CanvasArea = ({ image, onExportMask, zoomLevel, brushSize }) => {
     </div>
   );
 };
-
 
 export default CanvasArea;
