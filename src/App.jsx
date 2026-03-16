@@ -4,57 +4,69 @@ import ImageDisplay from "./components/ImageDisplay";
 import axios from "axios";
 import "./App.css";
 
+// Constants for brush size limits and default upload URL
 const DEFAULT_BRUSH_SIZE = 5;
 const MIN_BRUSH_SIZE = 1;
 const MAX_BRUSH_SIZE = 20;
 const UPLOAD_URL = "https://backend-msk.onrender.com/upload";
 
 const App = () => {
+  // State variables to manage image data and UI states
   const [image, setImage] = useState(null);
   const [maskImage, setMaskImage] = useState(null);
   const [uploadedData, setUploadedData] = useState(null);
   const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
   const [loading, setLoading] = useState(false);
 
+  // Handles image file upload and reads it as a data URL
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+    // Check if the file is an image
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       const reader = new FileReader();
+      // Set the image data once file is read successfully
       reader.onload = () => setImage(reader.result);
       reader.onerror = () => console.error("Error reading file");
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // Read file as Data URL
     }
   };
 
+  // Handles the export and upload of the mask and original images
   const handleMaskExport = async (maskDataUrl) => {
     setMaskImage(maskDataUrl);
 
+    // Prepare FormData object to send to the server
     const formData = new FormData();
     formData.append("original", convertDataURLToBlob(image));
     formData.append("mask", convertDataURLToBlob(maskDataUrl));
 
     setLoading(true);
     try {
+      // Send POST request to upload images
       const response = await axios.post(UPLOAD_URL, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      // Update state with the response data
       setUploadedData(response.data.data);
-      localStorage.setItem("url", response.data.data.maskImageUrl);
+      localStorage.setItem("url", response.data.data.maskImageUrl); // Store URL in local storage
     } catch (error) {
       console.error("Error uploading images:", error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state
     }
   };
 
+  // Converts a data URL to a Blob object
   const convertDataURLToBlob = (dataURL) => {
-    const byteString = atob(dataURL.split(",")[1]);
-    const mimeString = dataURL.split(",")[0].split(":")[1].split(";")[0];
+    const byteString = atob(dataURL.split(",")[1]); // Decode base64 string
+    const mimeString = dataURL.split(",")[0].split(":")[1].split(";")[0]; // Extract MIME type
     const ab = new ArrayBuffer(byteString.length);
     const ia = new Uint8Array(ab);
+    // Convert each character to its UTF-8 representation
     for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i);
     }
+    // Return a Blob constructed from the data
     return new Blob([ab], { type: mimeString });
   };
 
@@ -86,7 +98,7 @@ const App = () => {
           type="file"
           accept="image/jpeg, image/png"
           onChange={handleImageUpload}
-          className="hidden"
+          className="hidden" // Hidden input; label triggers file selection
         />
       </div>
 
@@ -103,9 +115,10 @@ const App = () => {
           min={MIN_BRUSH_SIZE}
           max={MAX_BRUSH_SIZE}
           value={brushSize}
-          onChange={(e) => setBrushSize(Number(e.target.value))}
+          onChange={(e) => setBrushSize(Number(e.target.value))} // Update brush size on slider change
           className="slider w-40 accent-blue-600"
           style={{
+            // Dynamic background for slider based on brush size
             background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${
               (brushSize / MAX_BRUSH_SIZE) * 100
             }%, #e5e7eb ${(brushSize / MAX_BRUSH_SIZE) * 100}%, #e5e7eb 100%)`,
@@ -119,7 +132,7 @@ const App = () => {
           <CanvasArea
             brushSize={brushSize}
             image={image}
-            onExportMask={handleMaskExport}
+            onExportMask={handleMaskExport} // Pass handler to CanvasArea
           />
         </div>
       )}
@@ -137,7 +150,7 @@ const App = () => {
         <div className="image-display flex flex-col items-center mt-6">
           <ImageDisplay
             original={uploadedData.originalImageUrl}
-            mask={uploadedData.maskImageUrl}
+            mask={uploadedData.maskImageUrl} // Display uploaded images
           />
         </div>
       )}
