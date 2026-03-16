@@ -21,6 +21,31 @@ This project is built using the following technologies:
 - **Tailwind CSS**: A utility-first CSS framework for styling the application.
 - **Vite**: A build tool that provides a fast and optimized development experience.
 
+## Installation
+
+Prerequisites: Ensure you have Node.js (>= 14.x) and npm (>= 6.x) installed on your system.
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/ArifRahaman/frontend_msk.git
+   cd frontend_msk
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+   The application will be available at `http://localhost:3000`.
+
 ## Usage Guide
 
 1. **Upload an Image**: Click on the upload section to select an image or drag and drop an image file.
@@ -31,6 +56,10 @@ This project is built using the following technologies:
 ## Environment Variables
 
 There are no specific environment variables required for this application. All configurations are handled internally.
+
+## API Reference
+
+- **POST /upload**: Uploads the original image and the drawn mask to the server. This endpoint requires a multipart/form-data request containing the fields `original` and `mask`.
 
 ## Architecture
 
@@ -66,4 +95,4 @@ We welcome contributions from the community. If you wish to contribute, please f
 This project is licensed under the MIT License. You are free to use, modify, and distribute this software in accordance with the terms of the license.
 
 ---
-> 🤖 *Last automated update: 2026-03-16 11:07:28*
+> 🤖 *Last automated update: 2026-03-16 11:39:18*
