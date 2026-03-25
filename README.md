@@ -71,10 +71,10 @@ flowchart TD
     src_components_ImageDisplay_jsx["components/ImageDisplay.jsx"]
     src_main_jsx["src/main.jsx"]
 
+    src_main_jsx --> src_App_jsx
+    src_App_jsx --> src_components_ImageDisplay_jsx
     src_App_jsx --> src_components_CanvasArea_jsx
     src_App_jsx --> src_App_css
-    src_App_jsx --> src_components_ImageDisplay_jsx
-    src_main_jsx --> src_App_jsx
 
     classDef backend fill:#1a1a2e,stroke:#7c6cf8,color:#e8eaf6
     classDef frontend fill:#0d1b2a,stroke:#00e8a2,color:#e8eaf6
@@ -94,5 +94,9 @@ We welcome contributions from the community. If you wish to contribute, please f
 
 This project is licensed under the MIT License. You are free to use, modify, and distribute this software in accordance with the terms of the license.
 
+## Image Mask Drawing Tool
+
+This section details the core functionality of the Image Mask Drawing Tool, including its image upload, canvas drawing capabilities, and mask export features. The tool utilizes React for UI components, with axios handling HTTP requests, and Tailwind CSS for styling. The application architecture emphasizes modularity and scalability, with a clean separation of UI and logic components.
+
 ---
-> 🤖 *Last automated update: 2026-03-16 11:39:18*
+> 🤖 *Last automated update: 2026-03-26 01:20:23*
